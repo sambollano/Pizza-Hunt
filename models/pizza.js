@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 
-const PizzaSchema = new Schema({
+const PizzaSchema = new Schema(
+  {
   pizzaName: {
     type: String
   },
@@ -24,8 +25,14 @@ const PizzaSchema = new Schema({
       ref: 'Comment'
     }
   ]
-  }
-),
+},
+{
+  toJSON: {
+    virtuals: true,
+  },
+  id: false,
+},
+);
 
 const Pizza = model('Pizza', PizzaSchema);
 
