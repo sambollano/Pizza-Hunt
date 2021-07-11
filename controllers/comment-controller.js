@@ -43,7 +43,7 @@ const commentController = {
         res.json(dbPizzaData);
       })
       .catch(err => res.json(err));
-  },
+  }
 };
 
 module.exports = commentController;
