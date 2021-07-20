@@ -1,186 +1,189 @@
-const $backBtn = document.querySelector('#back-btn');
-const $pizzaName = document.querySelector('#pizza-name');
-const $createdBy = document.querySelector('#created-by');
-const $createdAt = document.querySelector('#created-at');
-const $size = document.querySelector('#size');
-const $toppingsList = document.querySelector('#toppings-list');
-const $commentSection = document.querySelector('#comment-section');
-const $newCommentForm = document.querySelector('#new-comment-form');
+<!DOCTYPE html>
+<html lang="en">
 
-let pizzaId;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Recipe</title>
+  <link
+    href="https://fonts.googleapis.com/css?family=Spicy+Rice&display=swap&family=Karla:400,700|Rubik:400,400i,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
 
-function getPizza() {
-  // get id of pizza
-  const searchParams = new URLSearchParams(document.location.search.substring(1));
-  const pizzaId = searchParams.get('id');
+<body>
+  <header class="py-3 mb-3">
+    <div class="flex-row justify-space-between align-center container-fluid mx-auto">
+      <a href="/">
+        <h1 class="text-light bg-dark py-3 px-4 logo round-25-80">Pizza Hunt</h1>
+      </a>
 
-  // get pizzaInfo
-  fetch(`/api/pizzas/${pizzaId}`)
-    .then(response => {
-      console.log(response);
-      if (!response.ok) {
-        console.log('hi');
-        throw new Error({ message: 'Something went wrong!' });
-      }
+      <h3 class="text-light bg-dark p-3 round-25-80">
+        Create Your Own Pizza
+      </h3>
+    </div>
+  </header>
 
-      return response.json();
-    })
-    .then(printPizza)
-    .catch(err => {
-      console.log(err);
-      alert('Cannot find a pizza with this id! Taking you back.');
-      window.history.back();
-    });
-}
+  <main class="container-fluid flex-row mx-auto justify-space-between">
+    <div class="col-12 py-3 px-4 my-4 bg-dark round-25-80">
+      <h2 class="text-light">Create new pizza recipes that will dazzle your buds (and their taste buds)</h2>
+    </div>
 
-function printPizza(pizzaData) {
-  console.log(pizzaData);
+    <section class="bg-dark p-3 col-12 col-lg-8 mb-3 round-25-80">
+      <h2 class="text-light ">Let's start our masterpiece</h2>
+      <div class="col-12 col-lg-6 bg-dark p-3 mb-3">
+        <div class="form-container">
+          <form id="pizza-form">
+            <div class="mb-2">
+              <label for="pizza-name" class="form-label">Pizza Name</label>
+              <input type="text" id="pizza-name" name="pizza-name" class="form-input" placeholder="Enter Pizza Name"
+                required />
+            </div>
+            <div class="mb-2">
+              <label for="created-by" class="form-label">Who's Beautiful Idea is This?</label>
+              <input type="text" id="created-by" name="created-by" class="form-input" placeholder="Give us your name"
+                required />
+            </div>
+            <div class="mb-2">
+              <label for="pizza-size" class="form-label">Pizza Size (select from dropdown)</label>
+              <select id="pizza-size" class="form-input">
+                <option value="Personal">Personal</option>
+                <option value="Small">Small</option>
+                <option value="Medium">Medium</option>
+                <option value="Large">Large</option>
+                <option value="Extra Large">Extra Large</option>
+              </select>
+            </div>
+            <h3 class="text-tertiary">Choose your toppings</h3>
+            <div class="flex-row justify-space-between">
+              <div class="col-auto">
+                <div>
+                  <input type="checkbox" id="pepperoni" name="topping" value="Pepperoni">
+                  <label for="pepperoni">Pepperoni</label>
+                </div>
 
-  pizzaId = pizzaData._id;
+                <div>
+                  <input type="checkbox" id="sausage" name="topping" value="Sausage">
+                  <label for="sausage">Sausage</label>
+                </div>
 
-  const { pizzaName, createdBy, createdAt, size, toppings, comments } = pizzaData;
+                <div>
+                  <input type="checkbox" id="green-peppers" name="topping" value="Green Peppers">
+                  <label for="green-peppers">Green peppers</label>
+                </div>
 
-  $pizzaName.textContent = pizzaName;
-  $createdBy.textContent = createdBy;
-  $createdAt.textContent = createdAt;
-  $size.textContent = size;
-  $toppingsList.innerHTML = toppings
-    .map(topping => `<span class="col-auto m-2 text-center btn">${topping}</span>`)
-    .join('');
+                <div>
+                  <input type="checkbox" id="onions" name="topping" value="Onions">
+                  <label for="onions">Onions</label>
+                </div>
 
-  if (comments && comments.length) {
-    comments.forEach(printComment);
-  } else {
-    $commentSection.innerHTML = '<h4 class="bg-dark p-3 rounded">No comments yet!</h4>';
-  }
-}
+                <div>
+                  <input type="checkbox" id="bacon" name="topping" value="Bacon">
+                  <label for="bacon">Bacon</label>
+                </div>
 
-function printComment(comment) {
-  // make div to hold comment and subcomments
-  const commentDiv = document.createElement('div');
-  commentDiv.classList.add('my-2', 'card', 'p-2', 'w-100', 'text-dark', 'rounded');
+                <div>
+                  <input type="checkbox" id="basil" name="topping" value="Basil">
+                  <label for="basil">Basil</label>
+                </div>
+              </div>
 
-  const commentContent = `
-      <h5 class="text-dark">${comment.writtenBy} commented on ${comment.createdAt}:</h5>
-      <p>${comment.commentBody}</p>
-      <div class="bg-dark ml-3 p-2 rounded" >
-        ${
-          comment.replies && comment.replies.length
-            ? `<h5>${comment.replies.length} ${
-                comment.replies.length === 1 ? 'Reply' : 'Replies'
-              }</h5>
-        ${comment.replies.map(printReply).join('')}`
-            : '<h5 class="p-1">No replies yet!</h5>'
-        }
-      </div>
-      <form class="reply-form mt-3" data-commentid='${comment._id}'>
-        <div class="mb-3">
-          <label for="reply-name">Leave Your Name</label>
-          <input class="form-input" name="reply-name" required />
+              <div class="col-auto">
+                <div>
+                  <input type="checkbox" id="mushrooms" name="topping">
+                  <label for="mushrooms">Extra cheese</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="pineapple" name="topping" value="Pineapple">
+                  <label for="pineapple">Pineapple</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="ham" name="topping" value="Ham">
+                  <label for="ham">Ham</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="garlic" name="topping" value="Garlic">
+                  <label for="garlic">Garlic</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="tomatoes" name="topping" value="Tomatoes">
+                  <label for="tomatoes">Tomatoes</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="anchovies" name="topping" value="Anchovies">
+                  <label for="anchovies">Anchovies</label>
+                </div>
+              </div>
+
+              <div class="col-auto">
+                <div>
+                  <input type="checkbox" id="mushrooms" name="topping" value="Mushrooms">
+                  <label for="mushrooms">Mushrooms</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="olives" name="topping" value="Olives">
+                  <label for="olives">Olives</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="beef" name="topping" value="Beef">
+                  <label for="beef">Beef</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="pesto" name="topping" value="Pesto">
+                  <label for="pesto">Pesto</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="squash" name="topping" value="Squash">
+                  <label for="squash">Squash</label>
+                </div>
+
+                <div>
+                  <input type="checkbox" id="eggplant" name="topping" value="Eggplant">
+                  <label for="eggplant">Eggplant</label>
+                </div>
+              </div>
+
+              <!-- custom toppings -->
+              <div class="col-auto">
+                <div id="custom-toppings-list"></div>
+              </div>
+            </div>
+
+            <div class="w-100 display-block"></div>
+
+            <label for="new-topping" class="form-label">Add another topping to the list!</label>
+            <input type="text" id="new-topping" name="new-topping" class="form-input" placeholder="Add Topping" />
+
+            <button type="button" id="add-topping" class="btn">Add Topping</button>
+
+            <div class="my-4 border-light-top display-block w-100"></div>
+
+            <button type="submit" class="btn w-100 m-auto">Submit Recipe</button>
+          </form>
         </div>
-        <div class="mb-3">
-          <label for="reply">Leave a Reply</label>
-          <textarea class="form-textarea form-input"  name="reply" required></textarea>
-        </div>
+    </section>
 
-        <button class="mt-2 btn display-block w-100">Add Reply</button>
-      </form>
-  `;
+    <section class="bg-dark p-3 col-12 col-lg-4 mb-3 round-25-80 min-60-vh">
+      <h2 class="text-light px-2">Looking to do something else?</h2>
+      <nav>
+        <a class="btn display-block round-25-80" href="/">See All Pizzas.</a>
+      </nav>
+    </section>
 
-  commentDiv.innerHTML = commentContent;
-  $commentSection.prepend(commentDiv);
-}
+    </div>
+  </main>
+  <script src="./assets/js/add-pizza.js"></script>
+  <script src="./assets/js/idb.js"></script>
+</body>
 
-function printReply(reply) {
-  return `
-  <div class="card p-2 rounded bg-secondary">
-    <p>${reply.writtenBy} replied on ${reply.createdAt}:</p>
-    <p>${reply.replyBody}</p>
-  </div>
-`;
-}
-
-function handleNewCommentSubmit(event) {
-  event.preventDefault();
-
-  const commentBody = $newCommentForm.querySelector('#comment').value;
-  const writtenBy = $newCommentForm.querySelector('#written-by').value;
-
-  if (!commentBody || !writtenBy) {
-    return false;
-  }
-
-  const formData = { commentBody, writtenBy };
-
-  fetch(`/api/comments/${pizzaId}`, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(formData)
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Something went wrong!');
-      }
-      response.json();
-    })
-    .then(commentResponse => {
-      console.log(commentResponse);
-      // location.reload();
-    })
-    .catch(err => {
-      console.log(err);
-    });
-}
-
-function handleNewReplySubmit(event) {
-  event.preventDefault();
-
-  if (!event.target.matches('.reply-form')) {
-    return false;
-  }
-
-  const commentId = event.target.getAttribute('data-commentid');
-
-  const writtenBy = event.target.querySelector('[name=reply-name]').value;
-  const replyBody = event.target.querySelector('[name=reply]').value;
-
-  if (!replyBody || !writtenBy) {
-    return false;
-  }
-
-  const formData = { writtenBy, replyBody };
-
-  fetch(`/api/comments/${pizzaId}/${commentId}`, {
-    method: 'PUT',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(formData)
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Something went wrong!');
-      }
-      response.json();
-    })
-    .then(commentResponse => {
-      console.log(commentResponse);
-      location.reload();
-    })
-    .catch(err => {
-      console.log(err);
-    });
-}
-
-$backBtn.addEventListener('click', function() {
-  window.history.back();
-});
-
-$newCommentForm.addEventListener('submit', handleNewCommentSubmit);
-$commentSection.addEventListener('submit', handleNewReplySubmit);
-
-getPizza();
+</html>
