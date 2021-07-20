@@ -110,20 +110,26 @@ function handleNewCommentSubmit(event) {
   const formData = { commentBody, writtenBy };
 }
 
-function handleNewCommentSubmit(event) {
+function handleNewReplySubmit(event) {
   event.preventDefault();
 
-  const commentBody = $newCommentForm.querySelector('#comment').value;
-  const writtenBy = $newCommentForm.querySelector('#written-by').value;
-
-  if (!commentBody || !writtenBy) {
+  if (!event.target.matches('.reply-form')) {
     return false;
   }
 
-  const formData = { commentBody, writtenBy };
+  const commentId = event.target.getAttribute('data-commentid');
 
-  fetch(`/api/comments/${pizzaId}`, {
-    method: 'POST',
+  const writtenBy = event.target.querySelector('[name=reply-name]').value;
+  const replyBody = event.target.querySelector('[name=reply]').value;
+
+  if (!replyBody || !writtenBy) {
+    return false;
+  }
+
+  const formData = { writtenBy, replyBody };
+
+  fetch(`/api/comments/${pizzaId}/${commentId}`, {
+    method: 'PUT',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json'
